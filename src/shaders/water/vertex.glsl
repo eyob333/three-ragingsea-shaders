@@ -97,6 +97,7 @@ float PerlinClasicNoise3D(vec3 P)
 
 void main()
 {
+    //Base position
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
 
     // Elevation

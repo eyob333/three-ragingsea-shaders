@@ -8,7 +8,7 @@ import waterFragmentShader from './shaders/water/fragment.glsl?raw'
  * Base
  */
 // Debug
-const gui = new GUI({ width: 340 })
+const gui = new GUI({ width: 340}).close()
 const debugObject = {}
 
 // Canvas
