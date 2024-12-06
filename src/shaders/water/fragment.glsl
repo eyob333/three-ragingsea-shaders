@@ -19,19 +19,50 @@ vec3 DirectionalLight(
     float specularPow
     ){
 
-        vec3 lightDirection = normalize(position);
-        vec3 lightReflection = reflect( -lightDirection, normal);
+    vec3 lightDirection = normalize(position);
+    vec3 lightReflection = reflect( -lightDirection, normal);
 
-        //shading
-        float shading = dot(normal, lightDirection);
-        shading = max(.0, shading);
+    //shading
+    float shading = dot(normal, lightDirection);
+    shading = max(.0, shading);
 
-        //specular
-        float specular = -dot(lightReflection, viewDirection)
-        specular = max( .0, specular);
-        specular = pow(specular, specularPow);
-        return lightColor * intensity * shading + lightColor * intensity * specular;
-    }
+    //specular
+    float specular = -dot(lightReflection, viewDirection);
+    specular = max( .0, specular);
+    specular = pow(specular, specularPow);
+    return lightColor * intensity * shading + lightColor * intensity * specular;
+}
+
+vec3 PointLight(
+    vec3 lightColor, 
+    float intensity,
+    vec3 normal,
+    vec3 position,
+    vec3 viewDirection,
+    float specularPow,
+    vec3 viewPosition,
+    float lightDecay
+){
+    vec3 lightDelta = position - viewPosition;
+    vec3 lightDirection = normalize(position);
+    vec3 lightReflection = reflect( -lightDirection, normal);
+
+    //shading
+    float shading = dot(normal, lightDirection);
+    shading = max(.0, shading);
+
+    //specular
+    float specular = -dot(lightReflection, viewDirection);
+    specular = max( .0, specular);
+    specular = pow(specular, specularPow);
+
+    // decay 
+    float lightDistance = length(lightDelta);
+    float decay = 1. - lightDistance * lightDecay;
+
+
+    return lightColor * intensity * lightDecay * shading + lightColor * intensity * specular;
+}
 
 void main()
 {   
@@ -41,7 +72,7 @@ void main()
     vec3 color = mix(uDepthColor, uSurfaceColor, mixStrength);
 
     // Directional Light
-    color += AmbientLight(vec3(1.0, 0.98, 0.98), .2);
+    // color += AmbientLight(vec3(1.0, 0.98, 0.98), .02);
 
     // Final color
     gl_FragColor = vec4(color, 1.0);

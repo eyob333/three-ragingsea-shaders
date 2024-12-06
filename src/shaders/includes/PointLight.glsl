@@ -1,12 +1,14 @@
-vec3 DirectionalLight( 
+vec3 PointLight(
     vec3 lightColor, 
     float intensity,
     vec3 normal,
     vec3 position,
     vec3 viewDirection,
-    float specularPow
-    ){
-
+    float specularPow,
+    vec3 viewPosition,
+    float lightDecay
+){
+    vec3 lightDelta = position - viewPosition;
     vec3 lightDirection = normalize(position);
     vec3 lightReflection = reflect( -lightDirection, normal);
 
@@ -18,5 +20,11 @@ vec3 DirectionalLight(
     float specular = -dot(lightReflection, viewDirection);
     specular = max( .0, specular);
     specular = pow(specular, specularPow);
-    return lightColor * intensity * shading + lightColor * intensity * specular;
+
+    // decay 
+    float lightDistance = length(lightDelta);
+    float decay = 1. - lightDistance * lightDecay;
+
+
+    return lightColor * intensity * lightDecay * shading + lightColor * intensity * specular;
 }
