@@ -1,3 +1,6 @@
+
+// #include "./../includes/PerlinNoise.glsl";
+
 uniform float uTime;
 uniform float uBigWavesElevation;
 uniform vec2 uBigWavesFrequency;
@@ -9,10 +12,12 @@ uniform float uSmallWavesSpeed;
 uniform float uSmallIterations;
 
 varying float vElevation;
+varying vec3 vNormal;
+varying vec3 vPosition;
 
 // Classic Perlin 3D Noise 
 // by Stefan Gustavson
-//
+
 vec4 permute(vec4 x)
 {
     return mod(((x*34.0)+1.0)*x, 289.0);
@@ -117,4 +122,6 @@ void main()
     gl_Position = projectedPosition;
 
     vElevation = elevation;
+    vNormal = (modelMatrix * vec4(normal, 0.)).xyz;
+    vPosition = modelPosition.xyz;
 }

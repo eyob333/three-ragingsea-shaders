@@ -4,6 +4,9 @@ uniform float uColorOffset;
 uniform float uColorMultiplier;
 
 varying float vElevation;
+varying vec3 vNormal;
+varying vec3 vPosition;
+
 
 vec3 AmbientLight(vec3 lightcolor, float intensity){
 
@@ -66,6 +69,20 @@ vec3 PointLight(
 
 void main()
 {   
+    vec3 normal = normalize(vNormal);
+    vec3 viewDirection = normalize(vPosition - cameraPosition );
+    
+    //light
+    vec3 light = vec3(.0);
+    light += DirectionalLight(
+        vec3(1.),
+        1.,
+        normal,
+        vec3(-1., .5, .0),
+        viewDirection,
+        30.
+    );
+
     //Base color
     float mixStrength = (vElevation + uColorOffset) * uColorMultiplier;
     mixStrength = smoothstep(.0, 1., mixStrength);
@@ -73,9 +90,10 @@ void main()
 
     // Directional Light
     // color += AmbientLight(vec3(1.0, 0.98, 0.98), .02);
+    color *= light;
 
     // Final color
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(normal, 1.0);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
 }
